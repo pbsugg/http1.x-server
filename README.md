@@ -325,7 +325,7 @@ Look through the [request](http://en.wikipedia.org/wiki/List_of_HTTP_header_fiel
 
 Also think about how you're going to test this with a browser that proves your code is working correctly. What will you need to do and why?
 
-## Release 6, Turn On, Log In, Drop Out
+## Release 8, Turn On, Log In, Drop Out
 
 We're making headway. It's neat that we can track clients, but we really want to track _users_. If I, as a user, visit your website in Chrome then you're tracking the number of times I visit your site in Chrome. So far so good. But what if I  access your site from a different web browser? What will happen to my visit count?
 
@@ -349,7 +349,7 @@ GET makes sense when we want to read a web page — that's definitely read-only.
 
 Read through the HTTP [request methods](http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods), including the section on "Safe Methods". Should you be using a safe or un-safe method for login? Determine which method is most appropriate.
 
-## Release 7, Right Method, Right Time
+## Release 9, Right Method, Right Time
 
 For our purposes, POST is a logical method to use for logging in. It's un-safe, so it implies that accessing `/login` via `POST` will probably have a side-effect. More technically, a POST:
 
@@ -386,7 +386,7 @@ Once you determine the format, check your guess against the ["application/x-www-
 
 Now that you understand how data is coming in, you can parse and use **POST data** the same way you parsed and used data from the query parameters several releases ago. Use this to implement a login form.
 
-## Release 8, Say My Name... again
+## Release 10, Say My Name... again
 
 Now that we have users and sessions, let's update the `/profile` route with a friendly message. Greet the currently logged-in user.
 
@@ -404,7 +404,7 @@ Now that we have users and sessions, let's update the `/profile` route with a fr
 If there is no user logged in, redirect them to `/login`. You'll probably want to go back and review the [HTTP response codes](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes).
 
 
-## Release 9, Late Registration
+## Release 11, Late Registration
 
 Let's allow users to register new accounts on our servers. Create a resource at `/register`. The GET should provide a registration form with a username and password. The POST should actually add a user to your system.
 
