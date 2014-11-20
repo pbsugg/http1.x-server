@@ -81,7 +81,7 @@ You also made a simple _text protocol_ on top of TCP. In your protocol, if someo
 
 At the end of the day, a protocol is just an agreement that a client and server will send and receive messages in a specific format.
 
-Web browsers speak a text protocol too, it's called the **H**yper**t**ext **T**ransfer **P**rotocol. There are certain messages you can send to the server, known as **requests**, and certain messages you can expect to get back, known as **responses**. It's not altogether different from the protocol you just made.
+Web browsers speak a text protocol too, it's called the Hyper Text Transfer Protocol (HTTP). There are certain messages you can send to the server, known as **requests**, and certain messages you can expect to get back, known as **responses**. It's not altogether different from the protocol you just made.
 
 The cool part about any protocol is you can build software that "speaks it". If we can write a server that reads and writes messages in the right format, we should be able to visit it with any HTTP client, including your browser.
 
