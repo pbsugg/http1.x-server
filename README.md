@@ -41,13 +41,32 @@ Hello World
 
 Did you get it working? Congratulations, you just wrote your first server.
 
+## Release Interlude, Rerun
+
+You may have noticed that you need to kill and restart your server everytime you make a change. Nothing's sitting around waiting to reload your code for you.
+
+If you find manually restarting your server to be annoying, check out the [rerun](https://github.com/alexch/rerun) gem. `rerun` watches files for changes. If a change is detected, `rerun` kills the current process and re-runs the command.
+
+You can use `rerun` like this:
+
+```
+~/my-server $ rerun serv.rb
+```
+
+
 ## Release 2, Disrupt Facebook
 
-Let's make our server interactive. When a client connects to your server you should first read some input from them.
+Let's make our server interactive. When a client connects to your server you should first read some input from them. Remember that you can send data from Netcat to the server by typing and hitting "enter".
+
+The object returned by `TCPServer#accept` inherits from the [IO](http://www.ruby-doc.org/core-2.1.5/IO.html) class. You've already used `IO#puts` to send data to the client. Now you'll need to figure out how to _receive_ data.
+
+
+When your server is reading data, make it respond to certain commands:
 
  * If the client sends "home" then send them a welcome message.
  * If the client sends "profile" then send them some profile information. You can invent the client's profile, it doesn't need to be fancy.
  * If the client sends something you don't understand, send an error message back.
+
 
 Here's an example of what it might look like from the client's perspective:
 
@@ -68,6 +87,8 @@ And then there is California. --Edward Abbey
 foobar
 I don't understand :(
 ```
+
+You'll need to kill and re-start your server everytime you make a change.
 
 Don't forget to tag the release when you complete it.
 
@@ -102,9 +123,10 @@ As you saw in the Wikipedia [example](http://en.wikipedia.org/wiki/Hypertext_Tra
 
 When it comes time, make sure your response has these [response headers](http://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields):
 
- * Content-Length
- * Content-Type
  * Server
+ * Content-Type (should be the HTML [MIME type](http://en.wikipedia.org/wiki/Internet_media_type))
+ * Content-Length
+ * Connection (should be `close`, we don't want to leave it open)
 
 And use this as the body of the response you create:
 
@@ -125,11 +147,15 @@ And use this as the body of the response you create:
 >
 >You could also put your HTML in a text file and have your ruby program read it into a string, but you might save that re-factor for later.
 
-Finally, just like code, protocols are very specific. This will be a test of your attention to detail — you need to read and implement the formats precisely.
+Finally, just like code, protocols are very specific. This will be a test of your attention to detail — you need to read and implement the formats precisely. You can double-check your work by using the `curl` HTTP client from the command line. Make sure it gets back your HTML:
+
+```
+curl http://127.0.0.1:2000
+```
 
 ## Release Interlude: Natural Resources
 
-Currently our server sends the same response no matter what we request from netcat, but HTTP is all about _resources_. Resources are the **nouns** in the HTTP protocol, things we can access and interact with. You've accessed resources by their URI on the web many times, for example `/users/1/friends` or `/welcome`.
+Currently our server sends the same response no matter what we request from netcat, but HTTP is all about _resources_. Resources are the **nouns** in the HTTP protocol, things we can access and interact with. You've accessed resources on the web many times, for example `/users/1/friends` or `/welcome`.
 
 We interact with resources using their "URI", or "universal resource identifier". For example, we might assign the URI `/users` to the list of users in our system. We would write code on our server that lets us access that list over the HTTP protocol using that URI.
 
@@ -154,7 +180,7 @@ We'll be creating two resources in this release, identified by the URIs `/welcom
 </html>
 ```
 
-`/profile` will provide a resoure representing a user's profile. For now it's just basic static text:
+`/profile` will provide a resource representing a user's profile. For now it's just basic static text:
 
 ```
 <html>
@@ -175,16 +201,22 @@ Your server needs to be able to parse these request messages from clients and se
 
 When you formulate your request message in netcat, use the following [request headers](http://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields):
 
- * Host
+ * Host (we don't have a domain, our server is 127.0.0.1:2000)
  * User-Agent
 
 Finally, if a client requests any resource other than the two we're making available, send a response indicating that [we don't have it](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes). Hint, this won't be a `200 OK`.
+
+When you're finished you should be able to:
+
+ * Request `/welcome`
+ * Request `/profile`
+ * Request `/foobarbaz` and get an appropriate response indicating the resource can't be found
 
 ### Better tools
 
 By now you're probably tired of typing stuff into `nc`. Let's look at some better tools we can use now that we understand the fundamentals of the HTTP protocol.
 
-When (and only when) you are able to successfully request your two resources from the server with `nc`, check out the two tools below.
+When (and only when) you are able to successfully request your two resources (plus the 404) from the server with `nc`, check out the two tools below.
 
 #### curl
 
@@ -210,6 +242,8 @@ The network tab shows you all the traffic, including requests and responses, bet
  * Websocket connections
  * Static assets (JS, CSS, images, fonts)
  * And more
+
+Click on the entry for your GET request (`welcome`) and look at all the data it provides you.
 
 This is going to be very, very important tool going forward. You'll have some version of this tab open for the rest of your web development life.
 
@@ -240,6 +274,19 @@ You don't need to go test-first as you develop, but you'll want to implement tes
 
 **From here on out, code without correspending tests is not complete.** Your instructor is available to help you think about what to test and how.
 
+## Take a Break
+
+What have we accomplished so far? Quite a bit! We have:
+
+ * Learned about TCP, one of the foundational layers of the internet
+ * Learned about protocols
+ * Learned about the HTTP protocol format, HTTP resources, and URIs
+ * Produced a simple HTTP server that handles the request-response cycle for GET requests of HTTP resources
+ * Added support for query parameters in our HTTP server
+ * Added and maintained full test coverage of our HTTP server
+
+There are three more releases to go, and they're not easy. Get up, stretch, take a break. This is a moment to take a breather and clear your mind before diving back in.
+
 ## Release 6, Say My Name
 
 Let's make our application a little friendlier. If we access the `/welcome` resource it gives us a "hello world" page, but it'd be nice if we could provide a parameter to it with our name.
@@ -268,19 +315,6 @@ For our purposes, we'll want to be able to accept first and last names from the 
 Hopefully in the course of this release you've built a small URI parser method that extracts query parameters.
 
 Lucky you, that'll be easy to test.
-
-## Take a Break
-
-What have we accomplished so far? Quite a bit! We have:
-
- * Learned about TCP, one of the foundational layers of the internet
- * Learned about protocols
- * Learned about the HTTP protocol format, HTTP resources, and URIs
- * Produced a simple HTTP server that handles the request-response cycle for GET requests of HTTP resources
- * Added support for query parameters in our HTTP server
- * Added and maintained full test coverage of our HTTP server
-
-There are three more releases to go, and they're not easy. Get up, stretch, take a break. This is a moment to take a breather and clear your mind before diving back in.
 
 ## Release Interlude: Clients and Users
 
@@ -315,7 +349,9 @@ For example, if I opened up Chrome and visited my server 4 times, I'd expect to 
 </html>
 ```
 
-Think this through before you jump in. When your server accepts a connection, do we know it's a client who's visited before? How can you tell the difference between me accessing your site on _my_ computer and you accessing it on yours? Spend a few minutes considering this before you read on.
+Think this through before you jump in. When your server accepts a connection, do we know it's a client who's visited before? How can you tell the difference between me accessing your site on _my_ computer and you accessing it on yours? You and I should see two different counts when we go to `/visits`.
+
+Spend a few minutes considering this before you read on.
 
 If you're not really sure how to accomplish our goal, good. You're recognizing a fundamental characteristic of HTTP: it's **stateless**. That means that when a client requests a resource, we send something back, and then our server forgets the client ever existed, we don't save any information about them.
 
@@ -349,6 +385,8 @@ GET makes sense when we want to read a web page — that's definitely read-only.
 
 Read through the HTTP [request methods](http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods), including the section on "Safe Methods". Should you be using a safe or un-safe method for login? Determine which method is most appropriate.
 
+Note: **Clear your cookies** before moving on.
+
 ## Release 9, Right Method, Right Time
 
 For our purposes, POST is a logical method to use for logging in. It's un-safe, so it implies that accessing `/login` via `POST` will probably have a side-effect. More technically, a POST:
@@ -356,6 +394,7 @@ For our purposes, POST is a logical method to use for logging in. It's un-safe, 
 > "requests that the server accept the entity enclosed in the request as a new subordinate of the web resource identified by the URI."
 
 We could argue the session we create when a user logs in is a "new subordinate." So let's use the POST method to handle logging in instead of GET.
+
 
 ### Routing First
 
@@ -378,13 +417,15 @@ You know how to make forms, and you know how to make them POST to a url. But how
 
 We know how to send data in a GET request, we use a query string like `?search=sightglass`, but we don't know how to read data from a POST request. Since users will be logging in from form submissions, we should see how the browser sends forms.
 
-POST to your server using your login form (`GET /login`) and watch the network tab. In your server, also put in some logging statements that show the requests it receives.
+POST to your server in Chrome using your login form (`GET /login`) and watch the network tab. In your server, also put in some logging statements that show the requests it receives.
 
 Your goal is to _reverse-engineer_ the message format the browser is using to send data in the request. We know it's not query parameters in the resource URI, so where is that form data in the request and how is it formatted?
 
 Once you determine the format, check your guess against the ["application/x-www-form-urlencoded"](http://en.wikipedia.org/wiki/POST_(HTTP)#Use_for_submitting_web_forms) format.
 
 Now that you understand how data is coming in, you can parse and use **POST data** the same way you parsed and used data from the query parameters several releases ago. Use this to implement a login form.
+
+**Note:** This is probably a good time to mention that a request can only have a body if the request also specifies `Content-Length`. This is good news for you as someone parsing requests.
 
 ## Release 10, Say My Name... again
 
@@ -400,6 +441,8 @@ Now that we have users and sessions, let's update the `/profile` route with a fr
 </body>
 </html>
 ```
+
+### And if they're not logged in?
 
 If there is no user logged in, redirect them to `/login`. You'll probably want to go back and review the [HTTP response codes](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes).
 
