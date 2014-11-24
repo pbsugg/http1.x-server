@@ -421,11 +421,37 @@ POST to your server in Chrome using your login form (`GET /login`) and watch the
 
 Your goal is to _reverse-engineer_ the message format the browser is using to send data in the request. We know it's not query parameters in the resource URI, so where is that form data in the request and how is it formatted?
 
-Once you determine the format, check your guess against the ["application/x-www-form-urlencoded"](http://en.wikipedia.org/wiki/POST_(HTTP)#Use_for_submitting_web_forms) format.
+Once you determine the format, check your guess against the [application/x-www-form-urlencoded](http://en.wikipedia.org/wiki/POST_(HTTP)#Use_for_submitting_web_forms) format.
 
 Now that you understand how data is coming in, you can parse and use **POST data** the same way you parsed and used data from the query parameters several releases ago. Use this to implement a login form.
 
 **Note:** This is probably a good time to mention that a request can only have a body if the request also specifies `Content-Length`. This is good news for you as someone parsing requests.
+
+### The Great Escape
+
+You're almost done with form POSTs, but there's one last thing you need to consider. Think about a user providing a password of `&1234&`. Innocent enough, but once the request gets sent to your server the POST data string will look like this:
+
+```
+username=foobar&password=&1234&
+```
+
+Those pesky ampersands will mess up our data string because the password is using `&` — a reserved character. Your parser will split on `&` and the password will wind up nil!
+
+Luckily for you, the browser will first _URL encode it_. The browser will turn `&` into `%26` before it sends the POST data. This means your POST body is safe.
+
+```
+username=foobar&password=%261234%26
+```
+
+Of course, now you're checking the password `%261234%26` not `&1234&` on your server, so your user won't be able to login!
+
+The solution is to URL _decode_ the data your server receives from the client. You can use `CGI::unescape` in Ruby, which will convert reserved characters back to their original form.
+
+```ruby
+CGI.unescape("%261234%26") #=> "&1234&"
+```
+
+Now that you're reversing the browser's URL encoding process you should be all set.
 
 ## Release 10, Say My Name... again
 
@@ -449,9 +475,16 @@ If there is no user logged in, redirect them to `/login`. You'll probably want t
 
 ## Release 11, Late Registration
 
-Let's allow users to register new accounts on our servers. Create a resource at `/register`. The GET should provide a registration form with a username and password. The POST should actually add a user to your system.
+Let's allow users to register new accounts on our servers. Create a resource at `/register`. The GET should provide a registration form with a username and password. The POST should actually add a user to your system. But first...
 
-Update `/welcome` to show a list of all users registered with the system.
+### Wrap it up
+
+At this point your server should be:
+
+ * Providing a registration form and a POST route that will add new users to your system
+ * Correctly `CGI.unescape`-ing the username and passwords you receive from your registration _and_ login form.
+
+Finally, update `/welcome` to show a list of all users registered with the system.
 
 > Note: In practice, we'd *never* want to leak this kind of information. We're effectively giving an attacker a list of users in our system and saying "come at me."
 
