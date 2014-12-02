@@ -4,8 +4,6 @@ We're going to build an HTTP server from the ground up. No webrick, no thin, no 
 
 Given the length of the challenge, keep an eye on your code. You'll be working on the same code base for an extended period of time, so you'll need to strike a balance between over-designing and creating something that's a total hack.
 
-As you complete releases, [add a tag](http://git-scm.com/book/en/v2/Git-Basics-Tagging) to that commit and label it with "r1", "r2", etc. That way we can quickly jump through your releases during code review.
-
 ## Release 1, Make yourself some Internet
 
 Before we talk about HTTP, we need to talk about the "Transmission Control Protocol" or "TCP". TCP is a lower-level protocol that helps us send bytes of data between two machines on a network. It's one of the fundamental layers of the internet that you use every day. HTTP is built on top of it.
@@ -89,8 +87,6 @@ I don't understand :(
 ```
 
 You'll need to kill and re-start your server everytime you make a change.
-
-Don't forget to tag the release when you complete it.
 
 > Side-note: This release is less silly than you think. Before Facebook, we had the [finger](https://kb.iu.edu/d/aasp) protocol.
 
