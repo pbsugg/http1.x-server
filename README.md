@@ -14,7 +14,7 @@ Once a connection is established, the client and server can send and receive dat
 
 For this first relase, you'll produce a TCP server that returns "Hello World" when a client connects, then closes the connection.
 
-Use Ruby's [TCPServer](http://ruby-doc.org/stdlib-2.1.0/libdoc/socket/rdoc/TCPServer.html) class to create your server, the docs have a helpful example.
+Use Ruby's [TCPServer](http://ruby-doc.org/stdlib-2.1.0/libdoc/socket/rdoc/TCPServer.html) class to create your server, the docs have a helpful example. Your server should be **single-threaded**, do not attempt a threaded server, it will be harder to debug.
 
 ### Testing It
 You'll need to test your server by connecting to it. You can make a request to a TCP server using Netcat, aka `nc` in your terminal. Here's how you'd connect to a TCP server running at IP 127.0.0.1 on port 2000:
@@ -372,6 +372,8 @@ Add a resource, `/login`. Users can login to your system by passing query parame
 If users authenticate, ensure you're tracking them no matter what browser they're on. Regardless of what browser they use, accessing `/visits` should show the same number and track visits in each.
 
 At this point, it's ok to stop tracking non-authenticated users.
+
+**Note:** You might tempted to develop a **session store**, but let's keep things simple and just store information _in_ the cookie.
 
 ## Release Interlude: Method Acting
 
