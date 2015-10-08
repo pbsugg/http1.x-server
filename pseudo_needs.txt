@@ -1,0 +1,7 @@
+Can I easily add new resources?
+
+  
+
+Can I easily add new responses?
+Can I easily add new response headers?
+Can I easily parse new request headers?

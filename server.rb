@@ -1,5 +1,12 @@
 require 'socket'
 
+
+
+
+
+class HTTPServer
+
+
 server = TCPServer.new("127.0.0.1", 2000)
 loop do
   client = server.accept
@@ -47,4 +54,7 @@ HTTP/1.1 404 REQUEST NOT FOUND
 404
   end
 client.close
+end
+
+
 end
