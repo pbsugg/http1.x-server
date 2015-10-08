@@ -2,6 +2,9 @@
 
   some kind of container to hold all my different resources
   create one, add it to the pot
+  input: resource name
+  output: filename added to the container of existing resources
+
 
 2) Can I easily add new responses?
 
