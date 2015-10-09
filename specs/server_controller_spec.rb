@@ -9,9 +9,9 @@ describe "HTTPServer" do
 
   context "determine_response_header" do
 
-    # it "should return a 200 if the resource exists" do
-    #   expect(test_server.determine_response_header("profile.html"))
-    # end
+    it "should return a 200 if the resource exists" do
+      expect(test_server.determine_response_header("sinatra_server/views/test_file")).to eq(200)
+    end
 
     it "should return a 404 if the resource doesn't exist"
 

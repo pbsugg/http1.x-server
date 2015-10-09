@@ -57,10 +57,11 @@ class HTTPServer
   # end
 
 
+
   def determine_response_header(resource)
     normalized_resource = resource + ".html"
     case normalized_resource
-    when File.exists?("views/#{normalized_resource}")
+    when File.exists?("../sinatra_server/views/#{normalized_resource}")
       200
     else
       404
