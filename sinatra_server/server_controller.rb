@@ -56,16 +56,42 @@ class HTTPServer
   # client.close
   # end
 
-  def build_response_header(response_body)
 
+  def determine_response_header(resource)
+    normalized_resource = resource + ".html"
+    case normalized_resource
+    when File.exists?("views/#{normalized_resource}")
+      200
+    else
+      404
+    end
   end
 
-  def serve_response_body(view_filename)
-    response_body = open("views/#{view_filename}")
-    response_body.read
+  def build_response_header(response_body, http_code)
+    case http_code
+    when 200
+      response_header = <<-HEADER
+  HTTP/1.1 200 OK
+  Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+  Content-Type: text/html
+  Content-Length: #{response_body.length}
+  Connection: close
+  HEADER
+    when 404
+      response_header = <<-HEADER
+  HTTP/1.1 404 REQUEST NOT FOUND
+  HEADER
+    end
+  end
+
+  def serve_response_body(file_relative_path)
+    absolute_path = File.expand_path(file_relative_path)
+    response_body = open(absolute_path, "r")
+    p response_body.read
   end
 
 end
 
 # test = HTTPServer.new
-# test.serve_response_body("profile.html")
+# body = test.serve_response_body("views/welcome.html")
+# puts test.build_response_header(body, 200)
