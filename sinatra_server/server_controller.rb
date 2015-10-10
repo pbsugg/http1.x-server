@@ -6,6 +6,8 @@ require 'socket'
 
 class HTTPServer
 
+  @@root_path = "/Users/philipsugg/Desktop/DBC_Phase4/http-server-challenge"
+  @@views_path = "/Users/philipsugg/Desktop/DBC_Phase4/http-server-challenge/sinatra_server/views"
 
   # server = TCPServer.new("127.0.0.1", 2000)
   # loop do
@@ -60,15 +62,26 @@ class HTTPServer
 
   def determine_response_header(resource)
     normalized_resource = resource + ".html"
-    case normalized_resource
-    when File.exists?("../sinatra_server/views/#{normalized_resource}")
+    if File.file?("#{@@root_path}/sinatra_server/views/#{normalized_resource}")
       200
     else
       404
     end
   end
 
-  def build_response_header(response_body, http_code)
+
+  def build_response_body(http_code, resource)
+    normalized_resource = resource + ".html"
+    if http_code == 200
+      response_body = open("#{@@views_path}/#{normalized_resource}", "r")
+    elsif http_code == 404
+      response_body = open("#{@@views_path}/404.html", "r")
+    end
+    # TO DO: Know it's good practice to close the file after, don't know how here since I need to return the file.  Think it's OK for now.
+    response_body.read
+  end
+
+  def build_response_header(http_code, response_body)
     case http_code
     when 200
       response_header = <<-HEADER
@@ -85,14 +98,9 @@ class HTTPServer
     end
   end
 
-  def serve_response_body(file_relative_path)
-    absolute_path = File.expand_path(file_relative_path)
-    response_body = open(absolute_path, "r")
-    p response_body.read
-  end
 
 end
 
 # test = HTTPServer.new
-# body = test.serve_response_body("views/welcome.html")
+# p test.build_response_body(200, "welcome")
 # puts test.build_response_header(body, 200)
