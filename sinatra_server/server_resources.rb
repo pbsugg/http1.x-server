@@ -6,13 +6,10 @@ require 'socket'
 
 class HTTPServer
 
-  @@root_path = "/Users/philipsugg/Desktop/DBC_Phase4/http-server-challenge"
-  @@views_path = "/Users/philipsugg/Desktop/DBC_Phase4/http-server-challenge/sinatra_server/views"
+  @@root_path = Dir.getwd
+  @@views_path = "#{@@root_path}/sinatra_server/views"
 
-  # server = TCPServer.new("127.0.0.1", 2000)
-  # loop do
-  #   client = server.accept
-  #   input = client.gets.chomp
+
   #   case input
   #   when "GET /welcome HTTP/1.1"
   #   client.puts <<-WELCOME
@@ -59,10 +56,9 @@ class HTTPServer
   # end
 
 
-
   def determine_response_header(resource)
     normalized_resource = resource + ".html"
-    if File.file?("#{@@root_path}/sinatra_server/views/#{normalized_resource}")
+    if File.file?("#{@@root_path}/sinatra_server/views#{normalized_resource}")
       200
     else
       404
@@ -73,7 +69,7 @@ class HTTPServer
   def build_response_body(http_code, resource)
     normalized_resource = resource + ".html"
     if http_code == 200
-      response_body = open("#{@@views_path}/#{normalized_resource}", "r")
+      response_body = open("#{@@views_path}#{normalized_resource}", "r")
     elsif http_code == 404
       response_body = open("#{@@views_path}/404.html", "r")
     end
@@ -97,7 +93,6 @@ class HTTPServer
   HEADER
     end
   end
-
 
 end
 
