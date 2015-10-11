@@ -10,14 +10,14 @@ describe "HTTPServer" do
   end
 
 
-  context "determine_response_header" do
+  context "determine_response_code" do
 
     it "should return a 200 if the resource exists" do
-      expect(test_server.determine_response_header("/test_file")).to eq(200)
+      expect(test_server.determine_response_code("/test_file")).to eq(200)
     end
 
     it "should return a 404 if the resource doesn't exist" do
-      expect(test_server.determine_response_header("/non_existent_file")).to eq(404)
+      expect(test_server.determine_response_code("/non_existent_file")).to eq(404)
     end
 
   end

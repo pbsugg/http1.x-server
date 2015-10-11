@@ -9,10 +9,18 @@ require_relative 'server_helpers.rb'
 #return resources as the response
 
 
-socket = TCPServer.new("127.0.0.1", 2000)
+
+connection = TCPServer.new("127.0.0.1", 2000)
 server = HTTPServer.new
+
 loop do
-  client = socket.accept
-  input = client.gets.chomp
-  client.close
+  client = connection.accept
+  request_header = client.gets.chomp
+  resource = normalize_resource(get_http_resource(request_header))
+  response_code = determine_response_code(resource)
+  response_body = build_response_body(response_code, resource)
+  response_header = build_response_header(response_code, response_body)
+
+
+
 end
