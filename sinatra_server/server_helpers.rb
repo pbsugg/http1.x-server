@@ -1,3 +1,5 @@
+require 'cgi'
+
 module ServerHelpers
 
   def get_http_verb(request_header)
@@ -16,5 +18,12 @@ module ServerHelpers
     end
   end
 
-  
+  def parse_name_parameters(normalized_resource)
+    if normalized_resource.include?("?first")
+      query = normalized_resource.sub(/[\/].*[?]/, '')
+      CGI::parse(query)
+    end
+  end
+
+
 end

@@ -108,7 +108,6 @@ HEADER
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
 #{response_header}
-
 #{response_body}
   RESPONSE
   end
@@ -116,6 +115,8 @@ HEADER
 
 end
 
-test = HTTPServer.new
-test.build_response_body(200, "/welcome")
+
+
+# test = HTTPServer.new
+# test.build_response_body(200, "/welcome")
 # puts test.build_response_header(body, 200)

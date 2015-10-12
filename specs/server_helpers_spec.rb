@@ -23,6 +23,7 @@ describe "ServerHelpers" do
     let(:simple_request_header){"GET /index.html HTTP/1.1"}
     let(:complex_request_header){"POST /index/users/3.html HTTP/1.1"}
 
+
     it "should get the correct http verb" do
       expect(test_class.get_http_verb(simple_request_header)).to eq("GET")
       expect(test_class.get_http_verb(complex_request_header)).to eq("POST")
@@ -37,6 +38,19 @@ describe "ServerHelpers" do
     end
 
   end
+
+    context "extract query parameters" do
+
+      let(:query_parameter_header){"GET /welcome?first=Phil&last=Sugg HTTP/1.1"}
+
+      it 'should correctly extract the first and last name at the welcome screen' do
+        query_parameter_resource = test_class.get_http_resource(query_parameter_header)
+        expect(test_class.parse_name_parameters(query_parameter_resource)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
+      end
+
+
+    end
+
 
 
 end

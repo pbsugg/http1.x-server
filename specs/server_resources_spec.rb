@@ -71,7 +71,7 @@ Content-Length: 37
 Connection: close
 
 <html>
-  <p>This is a test</p>
+\t<p>This is a test</p>
 </html>
 EOS
     )

@@ -19,5 +19,5 @@ loop do
   response_code = server.determine_response_code(resource)
   response_body = server.build_response_body(response_code, resource)
   response_header = server.build_response_header(response_code, response_body)
-  client.puts(server.form_entire_response(response_header, response_body))
+  client.puts(server.form_entire_response(response_header, response_body))  
 end
