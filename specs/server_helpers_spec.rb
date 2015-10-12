@@ -45,7 +45,7 @@ describe "ServerHelpers" do
 
       it 'should correctly extract the first and last name at the welcome screen' do
         query_parameter_resource = test_class.get_http_resource(query_parameter_header)
-        expect(test_class.parse_name_parameters(query_parameter_resource)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
+        expect(test_class.parse_name_query_parameters(query_parameter_resource)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
       end
 
 

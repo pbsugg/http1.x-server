@@ -83,6 +83,18 @@ class HTTPServer
     finalized_response_body
   end
 
+  def insert_welcome_query_parameters
+    # this will all have to happen before i write the response
+
+    # decide whether there are name query parameters
+    # if there are, we need to alter the welcome file
+      # open the file
+      # find the beginning of the 'body' field
+      # insert the custom line after the body field
+      # close the file
+  end
+
+
   def build_response_header(http_code, response_body)
     case http_code
     when 200

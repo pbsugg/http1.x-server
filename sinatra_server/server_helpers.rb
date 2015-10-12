@@ -18,12 +18,15 @@ module ServerHelpers
     end
   end
 
-  def parse_name_parameters(normalized_resource)
+  def query_parameters?(normalized_resource)
+    normalized_resource.include?("?")
+  end
+
+  def parse_name_query_parameters(normalized_resource)
     if normalized_resource.include?("?first")
       query = normalized_resource.sub(/[\/].*[?]/, '')
       CGI::parse(query)
     end
   end
-
 
 end
