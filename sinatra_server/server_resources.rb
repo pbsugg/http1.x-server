@@ -96,16 +96,20 @@ Connection: close
 HEADER
     when 404
       response_header = <<-HEADER
-  HTTP/1.1 404 REQUEST NOT FOUND
-  HEADER
+HTTP/1.1 404 REQUEST NOT FOUND
+Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+Content-Type: text/html
+Content-Length: #{response_body.length}
+Connection: close
+HEADER
     end
   end
 
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
-  #{response_header}
+#{response_header}
 
-  #{response_body}
+#{response_body}
   RESPONSE
   end
 
