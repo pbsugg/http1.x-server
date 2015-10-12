@@ -1,6 +1,5 @@
 require 'socket'
 require_relative 'server_resources.rb'
-require_relative 'server_helpers.rb'
 
 
 #accept the connection
@@ -16,11 +15,9 @@ server = HTTPServer.new
 loop do
   client = connection.accept
   request_header = client.gets.chomp
-  resource = normalize_resource(get_http_resource(request_header))
-  response_code = determine_response_code(resource)
-  response_body = build_response_body(response_code, resource)
-  response_header = build_response_header(response_code, response_body)
-
-
-
+  resource = server.normalize_resource(server.get_http_resource(request_header))
+  response_code = server.determine_response_code(resource)
+  response_body = server.build_response_body(response_code, resource)
+  response_header = server.build_response_header(response_code, response_body)
+  client.puts(server.form_entire_response(response_header, response_body))
 end

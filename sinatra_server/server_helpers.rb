@@ -1,4 +1,3 @@
-
 module ServerHelpers
 
   def get_http_verb(request_header)
@@ -10,7 +9,12 @@ module ServerHelpers
   end
 
   def normalize_resource(resource)
-    resource + ".html" unless resource.include?(".html")
+    if resource.include?(".html")
+      resource
+    else
+      resource + ".html"
+    end
   end
 
+  
 end

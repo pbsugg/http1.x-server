@@ -46,12 +46,37 @@ describe "HTTPServer" do
     end
 
     it "should return the correctly formatted 404 header if no existing resource" do
-      contents_404 = test_server.build_response_body(404, "non_existent_resource")
+      contents_404 = test_server.build_response_body(404, "/non_existent_resource")
       expect(test_server.build_response_header(404, contents_404)).to include("HTTP/1.1 404 REQUEST NOT FOUND")
     end
 
   end
 
+
+ context "form entire response" do
+   it "should return a properly formatted response" do
+     open("sinatra_server/views/test_file.html", "w+") do |f|
+       f << "<html>\n"
+       f << "\t<p>This is a test</p>\n"
+       f << "</html>"
+     end
+     response_body = test_server.build_response_body(200, "/test_file")
+     response_header =  test_server.build_response_header(200, response_body)
+     expect(test_server.form_entire_response(response_header, response_body)). to eq(
+<<-EOS
+HTTP/1.1 200 OK
+Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+Content-Type: text/html
+Content-Length: 37
+Connection: close
+
+<html>
+  <p>This is a test</p>
+</html>
+EOS
+    )
+   end
+ end
 
 
   after :all do
