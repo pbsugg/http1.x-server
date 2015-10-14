@@ -11,55 +11,6 @@ class HTTPServer
 
   include ServerHelpers
 
-  #   case input
-  #   when "GET /welcome HTTP/1.1"
-  #   client.puts <<-WELCOME
-  # HTTP/1.1 200 OK
-  # Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
-  # Content-Type: text/html
-  # Content-Length: 198
-  # Connection: close
-  #
-  # <html>
-  # <head>
-  #   <title>Welcome</title>
-  # </head>
-  # <body>
-  #   <h1>Hello World</h1>
-  #   <p>Welcome to the world's simplest web server.</p>
-  #   <p><img src='http://i.imgur.com/A3crbYQ.gif'></p>
-  # </body>
-  # </html>
-  # WELCOME
-  #   when "GET /profile HTTP/1.1"
-  #     client.puts <<-PROFILE
-  # HTTP/1.1 200 OK
-  # Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
-  # Content-Type: text/html
-  # Content-Length: 112
-  # Connection: close
-  #
-  # <html>
-  # <head>
-  #   <title>My Profile Page</title>
-  # </head>
-  # <body>
-  #   <p>This is my profile page.</p>
-  # </body>
-  # </html>
-  # PROFILE
-  #   else
-  #     client.puts <<-404
-  # HTTP/1.1 404 REQUEST NOT FOUND
-  # 404
-    #   end
-  # client.close
-  # end
-
-
-
-
-
   def determine_response_code(resource)
     if File.file?("#{@@root_path}/sinatra_server/views#{normalize_resource(resource)}")
       200
@@ -69,29 +20,31 @@ class HTTPServer
   end
 
 
-  def build_response_body(http_code, resource)
+  def fetch_response_body(http_code, resource)
     if http_code == 200
       response_body = open("#{@@views_path}#{normalize_resource(resource)}", "r")
     elsif http_code == 404
       response_body = open("#{@@views_path}/404.html", "r")
     end
-    # TO DO: Know it's good practice to close the file after, don't know how here since I need to return the file.  Think it's OK for now.
-    finalized_response_body = ""
-    response_body.each_line do |line|
-      finalized_response_body << line
-    end
-    finalized_response_body
+    response_body.read
   end
 
-  def insert_welcome_query_parameters
-    # this will all have to happen before i write the response
+  # def build_response_body(fetched_response_body, resource)
+  #   # TO DO: Know it's good practice to close the file after, don't know how here since I need to return the file.  Think it's OK for now.
+  #   finalized_response_body = ""
+  #   response_body.each_line do |line|
+  #     finalized_response_body << line
+  #   end
+  #   finalized_response_body
+  # end
 
-    # decide whether there are name query parameters
-    # if there are, we need to alter the welcome file
-      # open the file
-      # find the beginning of the 'body' field
-      # insert the custom line after the body field
-      # close the file
+
+
+  def add_query_to_response_body(response_body, resource)
+    if resource == "/welcome" && query_parameters?(resource)
+      full_name = parse_name_query_parameters(resource)
+      insert_welcome_parameters(finalized_response_body, full_name)
+    end
   end
 
 

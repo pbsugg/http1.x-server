@@ -42,12 +42,16 @@ describe "ServerHelpers" do
     context "extract query parameters" do
 
       let(:query_parameter_header){"GET /welcome?first=Phil&last=Sugg HTTP/1.1"}
+      let(:welcome_file){File.open("sinatra_server/views/welcome.html", "r").read}
 
       it 'should correctly extract the first and last name at the welcome screen' do
-        query_parameter_resource = test_class.get_http_resource(query_parameter_header)
-        expect(test_class.parse_name_query_parameters(query_parameter_resource)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
+        expect(test_class.parse_name_query_parameters(query_parameter_header)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
       end
 
+      it 'should insert welcome parameters at the correct place in the body' do
+        full_name = test_class.parse_name_query_parameters(query_parameter_header)
+        expect(test_class.insert_welcome_parameters(welcome_file, full_name)).to include("Phil Sugg!")
+      end
 
     end
 

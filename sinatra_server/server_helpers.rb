@@ -7,7 +7,7 @@ module ServerHelpers
   end
 
   def get_http_resource(request_header)
-    http_resource = /\/[\S]*/.match(request_header)[0]
+    http_resource = /\/[^?|\s]*/.match(request_header)[0]
   end
 
   def normalize_resource(resource)
@@ -18,15 +18,21 @@ module ServerHelpers
     end
   end
 
-  def query_parameters?(normalized_resource)
-    normalized_resource.include?("?")
+  def query_parameters?(resource)
+    resource.include?("?")
   end
 
-  def parse_name_query_parameters(normalized_resource)
-    if normalized_resource.include?("?first")
-      query = normalized_resource.sub(/[\/].*[?]/, '')
+  def parse_name_query_parameters(request_header)
+    if request_header.include?("?first")
+      query = /first[^\s]*/.match(request_header)[0]
       CGI::parse(query)
     end
   end
+
+  def insert_welcome_parameters(finalized_response_body, full_name = {})
+    finalized_response_body.gsub!(/(World)/, "#{full_name["first"].pop} #{full_name["last"].pop}!" )
+    finalized_response_body
+  end
+
 
 end
