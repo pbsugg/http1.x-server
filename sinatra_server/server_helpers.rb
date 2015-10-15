@@ -2,6 +2,9 @@ require 'cgi'
 
 module ServerHelpers
 
+
+#Methods to process the request header
+
   # GET, POST, etc.
   def get_http_verb(request_header)
     http_verb = /^[A-Z]*/.match(request_header).to_s
@@ -16,6 +19,14 @@ module ServerHelpers
   def get_full_http_resource(request_header)
     full_http_resource = /\/[^\s]*/.match(request_header)[0]
   end
+
+  def find_uid_cookie(request_header)
+    if request_header.include?("Cookie:")
+      /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
+    end
+  end
+
+  # Methods to get the resource
 
   def normalize_resource(resource)
     if resource.include?(".html")
@@ -41,13 +52,22 @@ module ServerHelpers
     finalized_response_body
   end
 
-  def create_cookie
-    
-    # create a resource called /visits
-    # assign everyone who connects a uniquely identified cookie
-    # When you go to /visits, if that person has a cookie that the server recognizes, increment the visit count
+  # create a resource called /visits
+  # assign everyone who connects a uniquely identified cookie
+  # When you go to /visits, if that person has a cookie that the server recognizes, increment the visit count
 
+  def create_uid_cookie
+    require "securerandom"
+    "Set-Cookie: uid=#{SecureRandom.uuid}\n"
   end
+
+  def insert_to_header(header, line_to_insert)
+    index_to_insert = header.index(/Connection: close/)
+    revised_header = header.insert(index_to_insert, "#{line_to_insert}  ")
+  end
+
+
+
 
 
 end

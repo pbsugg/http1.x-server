@@ -55,10 +55,57 @@ describe "ServerHelpers" do
 
     end
 
+# still not sure how to format this test--can't get the regex to match
+
+    context "insert to header" do
+      let(:test_header){
+  <<-EOS
+  HTTP/1.1 200 OK
+  Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+  Content-Type: text/html
+  Content-Length: 37
+  Connection: close
+  EOS
+  }
+
+      it "should insert a line correctly into the test header" do
+        uid_header = test_class.create_uid_cookie
+        expect(test_class.insert_to_header(test_header, uid_header)).to match(
+  <<-EOS
+  HTTP/1.1 200 OK
+  Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+  Content-Type: text/html
+  Content-Length: 37
+  Set-Cookie: uid=\w{8}-\w{4}-\w{4}-\w{4}-\w{12}//
+  Connection: close
+  EOS
+        )
+      end
+
+    end
+
 
     context "cookies" do
 
-      it "should create a unique cookie"
+      it "should create a cookie" do
+        expect(test_class.create_uid_cookie).to match(/Set-Cookie: uid=\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)
+      end
+
+      it "should create unique cookies" do
+        cookie1 = test_class.create_uid_cookie
+        cookie2 = test_class.create_uid_cookie
+        expect(cookie1).not_to eq(cookie2)
+      end
+
+      it "should be able to find the cookie in a request" do
+        require "securerandom"
+        request_header = <<-EOS
+    GET /spec.html HTTP/1.1
+    Host: www.example.org
+    Cookie: #{SecureRandom.uuid}
+    EOS
+      expect(test_class.find_uid_cookie(request_header)).to match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)
+      end
 
     end
 

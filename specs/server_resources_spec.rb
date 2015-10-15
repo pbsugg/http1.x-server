@@ -52,7 +52,7 @@ describe "HTTPServer" do
   end
 
   contexts "cookies" do
-    
+
   end
 
     it "should be able to find the /visits page"
@@ -77,8 +77,6 @@ describe "HTTPServer" do
     end
 
   end
-
-
 
 
  context "form entire response" do

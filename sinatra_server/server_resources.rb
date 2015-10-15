@@ -11,6 +11,8 @@ class HTTPServer
 
   include ServerHelpers
 
+# Response pre-processing
+
   def determine_response_code(resource)
     if File.file?("#{@@root_path}/sinatra_server/views#{normalize_resource(resource)}")
       200
@@ -19,6 +21,7 @@ class HTTPServer
     end
   end
 
+#Response body methods
 
   def build_response_body(http_code, resource)
     case http_code
@@ -37,6 +40,8 @@ class HTTPServer
       insert_welcome_parameters(response_body, full_name)
     end
   end
+
+# Response header methods
 
   def build_response_header(http_code, response_body)
     case http_code
@@ -59,6 +64,12 @@ Connection: close
 HEADER
     end
   end
+
+
+  def aggregate_response_header(response_header)
+    insert_to_header(response_header, create_uid_cookie) if find_uid_cookie
+  end
+
 
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
