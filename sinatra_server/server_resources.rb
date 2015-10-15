@@ -20,33 +20,23 @@ class HTTPServer
   end
 
 
-  def fetch_response_body(http_code, resource)
-    if http_code == 200
+  def build_response_body(http_code, resource)
+    case http_code
+    when 200
       response_body = open("#{@@views_path}#{normalize_resource(resource)}", "r")
-    elsif http_code == 404
+    when 404
       response_body = open("#{@@views_path}/404.html", "r")
     end
     response_body.read
   end
 
-  # def build_response_body(fetched_response_body, resource)
-  #   # TO DO: Know it's good practice to close the file after, don't know how here since I need to return the file.  Think it's OK for now.
-  #   finalized_response_body = ""
-  #   response_body.each_line do |line|
-  #     finalized_response_body << line
-  #   end
-  #   finalized_response_body
-  # end
-
-
 
   def add_query_to_response_body(response_body, resource)
-    if resource == "/welcome" && query_parameters?(resource)
+    if get_base_http_resource(resource) == "/welcome" && query_parameters?(resource)
       full_name = parse_name_query_parameters(resource)
-      insert_welcome_parameters(finalized_response_body, full_name)
+      insert_welcome_parameters(response_body, full_name)
     end
   end
-
 
   def build_response_header(http_code, response_body)
     case http_code

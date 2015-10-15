@@ -30,11 +30,11 @@ describe "ServerHelpers" do
     end
 
     it "should get a one-level deep resource" do
-      expect(test_class.get_http_resource(simple_request_header)).to eq("/index.html")
+      expect(test_class.get_base_http_resource(simple_request_header)).to eq("/index.html")
     end
 
     it "should get an entire resource that is several levels deep" do
-      expect(test_class.get_http_resource(complex_request_header)).to eq("/index/users/3.html")
+      expect(test_class.get_base_http_resource(complex_request_header)).to eq("/index/users/3.html")
     end
 
   end
@@ -55,6 +55,12 @@ describe "ServerHelpers" do
 
     end
 
+
+    context "cookies" do
+
+      it "should create a unique cookie"
+
+    end
 
 
 end
