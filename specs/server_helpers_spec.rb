@@ -69,14 +69,14 @@ describe "ServerHelpers" do
   }
 
       it "should insert a line correctly into the test header" do
-        uid_header = test_class.create_uid_cookie
-        expect(test_class.insert_to_header(test_header, uid_header)).to match(
+        sample_insert = "Test: This is a Test\n"
+        expect(test_class.insert_to_header(test_header, sample_insert)).to match(
   <<-EOS
   HTTP/1.1 200 OK
   Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
   Content-Type: text/html
   Content-Length: 37
-  Set-Cookie: uid=\w{8}-\w{4}-\w{4}-\w{4}-\w{12}//
+  Test: This is a Test
   Connection: close
   EOS
         )

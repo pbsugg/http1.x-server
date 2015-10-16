@@ -20,7 +20,7 @@ module ServerHelpers
     full_http_resource = /\/[^\s]*/.match(request_header)[0]
   end
 
-  def find_uid_cookie(request_header)
+  def find_uid_cookie?(request_header)
     if request_header.include?("Cookie:")
       /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
     end

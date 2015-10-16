@@ -67,7 +67,7 @@ HEADER
 
 
   def aggregate_response_header(response_header)
-    insert_to_header(response_header, create_uid_cookie) if find_uid_cookie
+    insert_to_header(response_header, create_uid_cookie) if find_uid_cookie?
   end
 
 
