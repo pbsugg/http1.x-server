@@ -7,7 +7,7 @@ require 'net/http'
 
 describe "runner file" do
 
-  let(:sample_uri){URI('http://127.0.0.1:2000/welcome')}
+  let(:sample_welcome_uri){URI('http://127.0.0.1:2000/welcome')}
   let(:successful_http_get){Net::HTTP.get(sample_uri)}
   let(:bad_uri){URI('http://127.0.0.1:2000/no_one_home')}
   let(:unsuccessful_http_get){Net::HTTP.get(bad_uri)}
@@ -22,5 +22,14 @@ describe "runner file" do
 
   it "should correctly parse the query parameters and insert them into the welcome page"
 
+  contexts "cookie" do
+
+    it "should give a cookie to the end-user on the /visits page"
+
+    it "should add up all visits for a user with a given cookie"
+
+    it "should not count someone with a different cookie toward visits"
+
+  end
 
 end

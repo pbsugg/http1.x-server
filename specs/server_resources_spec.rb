@@ -51,17 +51,11 @@ describe "HTTPServer" do
 
   end
 
-  contexts "cookies" do
+  context "visits" do
 
-  end
-
-    it "should be able to find the /visits page"
-
-    it "should give a cookie to the end-user on the /visits page"
-
-    it "should add up all visits for a user with a given cookie"
-
-    it "should not count someone with a different cookie toward visits"
+    it "should be able to find the /visits page" do
+      expect(test_server.determine_response_code("/visits")). to eq(200)
+    end
 
   end
 
@@ -72,7 +66,7 @@ describe "HTTPServer" do
     it "should correctly add the first and last name to the welcome screen" do
       # p welcome_file
       full_http_resource = test_server.get_full_http_resource(query_parameter_header)
-      response_body = test_server.add_query_to_response_body(welcome_file, full_http_resource)
+      response_body = test_server.aggregate_response_body(welcome_file, full_http_resource)
       expect(response_body).to include("Phil Sugg!")
     end
 

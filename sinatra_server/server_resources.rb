@@ -7,14 +7,14 @@ require_relative "server_helpers.rb"
 class HTTPServer
 
   @@root_path = Dir.getwd
-  @@views_path = "#{@@root_path}/sinatra_server/views"
+  @@views_path = "#{@@root_path}/views"
 
   include ServerHelpers
 
 # Response pre-processing
 
   def determine_response_code(resource)
-    if File.file?("#{@@root_path}/sinatra_server/views#{normalize_resource(resource)}")
+    if File.file?("#{@@root_path}/views#{normalize_resource(resource)}")
       200
     else
       404
@@ -34,10 +34,18 @@ class HTTPServer
   end
 
 
-  def add_query_to_response_body(response_body, resource)
-    if get_base_http_resource(resource) == "/welcome" && query_parameters?(resource)
-      full_name = parse_name_query_parameters(resource)
-      insert_welcome_parameters(response_body, full_name)
+ #todo: something smells about this method still, it does/knows too much
+ # don't like the fact that this is take three arguments either, obv. doing too much
+  def aggregate_response_body(response_body, resource, full_resource)
+    # welcome page
+    if resource == "/welcome.html" && query_parameters?(full_resource)
+      p full_name = parse_name_query_parameters(full_resource)
+      p insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
+    # visits page
+  elsif get_base_http_resource(resource) == "/visits.html"
+      "hello"
+    else
+      response_body
     end
   end
 
@@ -67,13 +75,14 @@ HEADER
 
 
   def aggregate_response_header(response_header)
-    insert_to_header(response_header, create_uid_cookie) if find_uid_cookie?
+    insert_to_header(response_header, create_uid_cookie) unless find_uid_cookie(response_header)
   end
 
 
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
 #{response_header}
+
 #{response_body}
   RESPONSE
   end

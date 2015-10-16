@@ -20,12 +20,6 @@ module ServerHelpers
     full_http_resource = /\/[^\s]*/.match(request_header)[0]
   end
 
-  def find_uid_cookie?(request_header)
-    if request_header.include?("Cookie:")
-      /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
-    end
-  end
-
   # Methods to get the resource
 
   def normalize_resource(resource)
@@ -43,27 +37,41 @@ module ServerHelpers
   def parse_name_query_parameters(resource)
     if resource.include?("?first")
       query = /first[^\s]*/.match(resource)[0]
-      CGI::parse(query)
+      full_name = CGI::parse(query)
+      "#{full_name["first"].pop} #{full_name["last"].pop}!"
     end
   end
 
-  def insert_welcome_parameters(finalized_response_body, full_name = {})
-    finalized_response_body.gsub!(/(World)/, "#{full_name["first"].pop} #{full_name["last"].pop}!" )
-    finalized_response_body
+  # insert point = text to replace
+  #text_to_insert = what you want to add
+  def insert_to_body(params = {})
+    params[:response_body].gsub!(/(#{params[:insert_point]})/, "#{params[:text_to_insert]}" )
   end
 
   # create a resource called /visits
   # assign everyone who connects a uniquely identified cookie
   # When you go to /visits, if that person has a cookie that the server recognizes, increment the visit count
 
-  def create_uid_cookie
-    require "securerandom"
-    "Set-Cookie: uid=#{SecureRandom.uuid}\n"
+
+  # cookie methods
+
+  def find_uid_cookie(request_header)
+    if request_header.include?("Cookie:")
+      /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
+    end
   end
 
+  def create_uid_cookie
+    require "securerandom"
+    "Set-Cookie: uid=#{SecureRandom.uuid}; Expires=Wed, 09 Jun 2021 10:18:14 GMT\n"
+  end
+
+  # header methods
+
   def insert_to_header(header, line_to_insert)
+    # always inserting immediately before the last line
     index_to_insert = header.index(/Connection: close/)
-    revised_header = header.insert(index_to_insert, "#{line_to_insert}  ")
+    revised_header = header.insert(index_to_insert, "#{line_to_insert}")
   end
 
 

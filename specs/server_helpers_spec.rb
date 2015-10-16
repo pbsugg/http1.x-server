@@ -45,12 +45,12 @@ describe "ServerHelpers" do
       let(:welcome_file){File.open("sinatra_server/views/welcome.html", "r").read}
 
       it 'should correctly extract the first and last name at the welcome screen' do
-        expect(test_class.parse_name_query_parameters(query_parameter_header)).to eq({"first"=>["Phil"], "last"=>["Sugg"]})
+        expect(test_class.parse_name_query_parameters(query_parameter_header)).to eq("Phil Sugg!")
       end
 
       it 'should insert welcome parameters at the correct place in the body' do
         full_name = test_class.parse_name_query_parameters(query_parameter_header)
-        expect(test_class.insert_welcome_parameters(welcome_file, full_name)).to include("Phil Sugg!")
+        expect(test_class.insert_to_body({response_body: welcome_file, insert_point: "World", text_to_insert: full_name})).to include("Phil Sugg!")
       end
 
     end
