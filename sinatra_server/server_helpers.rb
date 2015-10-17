@@ -20,15 +20,6 @@ module ServerHelpers
     full_http_resource = /\/[^\s]*/.match(request_header)[0]
   end
 
-  # Methods to get the resource
-
-  def normalize_resource(resource)
-    if resource.include?(".html")
-      resource
-    else
-      resource + ".html"
-    end
-  end
 
   def query_parameters?(resource)
     resource.include?("?")
@@ -41,6 +32,18 @@ module ServerHelpers
       "#{full_name["first"].pop} #{full_name["last"].pop}!"
     end
   end
+
+  # Methods to get the resource
+
+  def normalize_resource(resource)
+    if resource.include?(".html")
+      resource
+    else
+      resource + ".html"
+    end
+  end
+
+# dealing with the body
 
   # insert point = text to replace
   #text_to_insert = what you want to add
@@ -73,9 +76,6 @@ module ServerHelpers
     index_to_insert = header.index(/Connection: close/)
     revised_header = header.insert(index_to_insert, "#{line_to_insert}")
   end
-
-
-
 
 
 end

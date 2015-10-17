@@ -42,8 +42,9 @@ class HTTPServer
       p full_name = parse_name_query_parameters(full_resource)
       p insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
-  elsif get_base_http_resource(resource) == "/visits.html"
-      "hello"
+    elsif get_base_http_resource(resource) == "/visits"
+      # insert_to_body
+
     else
       response_body
     end
@@ -74,8 +75,8 @@ HEADER
   end
 
 
-  def aggregate_response_header(response_header)
-    insert_to_header(response_header, create_uid_cookie) unless find_uid_cookie(response_header)
+  def aggregate_response_header(request_header, response_header)
+    insert_to_header(response_header, create_uid_cookie) unless find_uid_cookie(request_header)
   end
 
 

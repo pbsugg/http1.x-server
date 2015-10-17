@@ -1,7 +1,6 @@
 require 'socket'
 require_relative 'server_resources.rb'
 
-
 #accept the connection
 #parse the HTTP request
 #fetch the necessary resources
@@ -16,8 +15,14 @@ server = HTTPServer.new
 loop do
   # get client
   client = connection.accept
-  request_header = client.gets.chomp
-  p request_header
+
+# had to get each line of header, did it with this messy "break" method--has to be a better way!
+  request_header = ""
+  client.each_line do |line|
+    request_header << line
+    break if line == "\r\n"
+  end
+
   # fetch the resource(s) and determine code
   resource = server.normalize_resource(server.get_base_http_resource(request_header))
   response_code = server.determine_response_code(resource)
@@ -30,7 +35,7 @@ loop do
 
   # build header
   response_header = server.build_response_header(response_code, response_body)
-  finalized_response_header = server.aggregate_response_header(response_header)
+  finalized_response_header = server.aggregate_response_header(request_header, response_header)
 
   # send it to the client
   client.puts(server.form_entire_response(finalized_response_header, finalized_response_body))
