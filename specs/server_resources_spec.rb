@@ -63,10 +63,13 @@ describe "HTTPServer" do
     let(:query_parameter_header){"GET /welcome?first=Phil&last=Sugg HTTP/1.1"}
     let(:welcome_file){File.open("sinatra_server/views/welcome.html", "r").read}
 
+    # This test is kind of convoluted
     it "should correctly add the first and last name to the welcome screen" do
-      # p welcome_file
+      basic_resource = test_server.get_base_http_resource(query_parameter_header)
+      basic_resource = test_server.normalize_resource(basic_resource)
       full_http_resource = test_server.get_full_http_resource(query_parameter_header)
-      response_body = test_server.aggregate_response_body(welcome_file, full_http_resource)
+
+      response_body = test_server.aggregate_response_body(welcome_file, basic_resource, full_http_resource)
       expect(response_body).to include("Phil Sugg!")
     end
 

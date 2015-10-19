@@ -69,7 +69,7 @@ describe "ServerHelpers" do
   }
 
       it "should insert a line correctly into the test header" do
-        sample_insert = "Test: This is a Test\n"
+        sample_insert = "Test: This is a Test"
         expect(test_class.insert_to_header(test_header, sample_insert)).to match(
   <<-EOS
   HTTP/1.1 200 OK

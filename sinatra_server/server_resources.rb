@@ -6,7 +6,7 @@ require_relative "server_helpers.rb"
 
 class HTTPServer
 
-  @@root_path = Dir.getwd
+  @@root_path = File.dirname(__FILE__)
   @@views_path = "#{@@root_path}/views"
 
   include ServerHelpers
@@ -39,8 +39,8 @@ class HTTPServer
   def aggregate_response_body(response_body, resource, full_resource)
     # welcome page
     if resource == "/welcome.html" && query_parameters?(full_resource)
-      p full_name = parse_name_query_parameters(full_resource)
-      p insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
+      full_name = parse_name_query_parameters(full_resource)
+      insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
     elsif get_base_http_resource(resource) == "/visits"
       # insert_to_body
@@ -83,7 +83,6 @@ HEADER
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
 #{response_header}
-
 #{response_body}
   RESPONSE
   end

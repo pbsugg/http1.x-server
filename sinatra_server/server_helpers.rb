@@ -71,6 +71,7 @@ module ServerHelpers
 
   # header methods
 
+  # This test is bad at the moment, causing problems with format of header
   def insert_to_header(header, line_to_insert)
     # always inserting immediately before the last line
     index_to_insert = header.index(/Connection: close/)
