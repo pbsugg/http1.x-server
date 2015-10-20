@@ -58,16 +58,35 @@ module ServerHelpers
 
   # cookie methods
 
-  def find_uid_cookie(request_header)
-    if request_header.include?("Cookie:")
-      /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
-    end
+  def visit_cookie?(request_header)
+    request_header.include?("Cookie:")
   end
 
-  def create_uid_cookie
-    require "securerandom"
-    "Set-Cookie: uid=#{SecureRandom.uuid}; Expires=Wed, 09 Jun 2021 10:18:14 GMT\n"
+  def find_visit_cookie(request_header)
+      /(visit-count=)\d/.match(request_header)[0]
   end
+
+  def create_visit_cookie
+<<-EOF
+Set-Cookie: visit-count=1
+EOF
+  end
+
+  # gets the number of visits in string form
+  def get_visit_count(request_header)
+    /(visit-count=)\d/.match(request_header)[0][-1]
+  end
+
+  # updates the visitor count by one
+  def add_to_visit_count(request_header)
+    visit_count = /(visit-count=)\d/.match(request_header)
+    count = visit_count[0][-1].to_i
+    count += 1
+    request_header.gsub!(/(visit-count=\d)/, "visit-count=#{count}")
+  end
+
+
+
 
   # header methods
 

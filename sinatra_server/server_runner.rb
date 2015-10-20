@@ -31,7 +31,7 @@ loop do
 
   # build the body
   response_body = server.build_response_body(response_code, resource)
-  finalized_response_body = server.aggregate_response_body(response_body,resource, full_resource)
+  finalized_response_body = server.aggregate_response_body(request_header, response_body, resource, full_resource)
 
   # build header
   response_header = server.build_response_header(response_code, response_body)

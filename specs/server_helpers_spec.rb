@@ -40,9 +40,8 @@ describe "ServerHelpers" do
   end
 
     context "extract query parameters" do
-
       let(:query_parameter_header){"GET /welcome?first=Phil&last=Sugg HTTP/1.1"}
-      let(:welcome_file){File.open("sinatra_server/views/welcome.html", "r").read}
+      let(:welcome_file){File.open("../sinatra_server/views/welcome.html", "r").read}
 
       it 'should correctly extract the first and last name at the welcome screen' do
         expect(test_class.parse_name_query_parameters(query_parameter_header)).to eq("Phil Sugg!")
@@ -87,6 +86,13 @@ describe "ServerHelpers" do
 
     context "cookies" do
 
+      require "securerandom"
+      request_header = <<-EOS
+  GET /spec.html HTTP/1.1
+  Host: www.example.org
+  Cookie: #{SecureRandom.uuid}
+  EOS
+
       it "should create a cookie" do
         expect(test_class.create_uid_cookie).to match(/Set-Cookie: uid=\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)
       end
@@ -97,15 +103,16 @@ describe "ServerHelpers" do
         expect(cookie1).not_to eq(cookie2)
       end
 
-      it "should be able to find the cookie in a request" do
-        require "securerandom"
-        request_header = <<-EOS
-    GET /spec.html HTTP/1.1
-    Host: www.example.org
-    Cookie: #{SecureRandom.uuid}
-    EOS
-      expect(test_class.find_uid_cookie(request_header)).to match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)
+      it "should register a cookie in a request" do
+
+        expect(test_class.uid_cookie?(request_header)).to eq(true)
       end
+
+
+      it "should be able to return the cookie number" do
+        expect(test_class.find_uid_cookie(request_header)).to match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/)
+      end
+
 
     end
 

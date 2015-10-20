@@ -36,15 +36,15 @@ class HTTPServer
 
  #todo: something smells about this method still, it does/knows too much
  # don't like the fact that this is take three arguments either, obv. doing too much
-  def aggregate_response_body(response_body, resource, full_resource)
+  def aggregate_response_body(request_header, response_body, resource, full_resource)
     # welcome page
     if resource == "/welcome.html" && query_parameters?(full_resource)
       full_name = parse_name_query_parameters(full_resource)
       insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
     elsif get_base_http_resource(resource) == "/visits"
-      # insert_to_body
-
+      count = get_visit_count(request_header)
+      insert_to_body({response_body: response_body, insert_point: "X", text_to_insert: "Visit-count=#{count}"})
     else
       response_body
     end
@@ -76,9 +76,13 @@ HEADER
 
 
   def aggregate_response_header(request_header, response_header)
-    insert_to_header(response_header, create_uid_cookie) unless find_uid_cookie(request_header)
+     if visit_cookie?(request_header)
+       puts request_header
+       add_to_visit_count(request_header)
+     else
+       insert_to_header(response_header, create_visit_cookie)
+     end
   end
-
 
   def form_entire_response(response_header, response_body)
   <<-RESPONSE
