@@ -8,8 +8,7 @@ Create login resources:
   - parsing the login query
 -Come up with a method for processing GET vs. POST
 
--Hook up the login functionality to the "visit" functionality, so that I'm tracking login visits
+-Hook up the login functionality to the "visit" functionality, so that I'm tracking logged-in visits only
   --i.e., they have to be logged in to track visits
-  (does this make sense for me? maybe i want to *add* functionality)
-
---show user info on the profile page based on login
+  (might not be that hard to do messily, just add "if" conditional to visits)
+--show user info on the profile page based on login   
