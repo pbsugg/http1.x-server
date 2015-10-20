@@ -12,6 +12,7 @@ module ServerHelpers
 
   # just the base uri that allows me to find the files
   def get_base_http_resource(request_header)
+    p request_header
     base_http_resource = /\/[^?|\s]*/.match(request_header)[0]
   end
 
@@ -59,11 +60,7 @@ module ServerHelpers
   # cookie methods
 
   def visit_cookie?(request_header)
-    request_header.include?("Cookie:")
-  end
-
-  def find_visit_cookie(request_header)
-      /(visit-count=)\d/.match(request_header)[0]
+    request_header.include?("visit-count")
   end
 
   def create_visit_cookie
@@ -72,21 +69,30 @@ Set-Cookie: visit-count=1
 EOF
   end
 
+# cookie procedure
+# when a new visitor comes
+# see if they have your cookie
+# if they DON'T
+  # send them a cookie with a identifying number at 1
+# if they DO...
+    # get the visit count
+    # add 1 to it
+    # put the new count in the body AND header
+
+
   # gets the number of visits in string form
   def get_visit_count(request_header)
-    /(visit-count=)\d/.match(request_header)[0][-1]
+    /(?<=visit-count=)\d*/.match(request_header)[0].to_i
   end
 
   # updates the visitor count by one
-  def add_to_visit_count(request_header)
-    visit_count = /(visit-count=)\d/.match(request_header)
-    count = visit_count[0][-1].to_i
-    count += 1
-    request_header.gsub!(/(visit-count=\d)/, "visit-count=#{count}")
+  def add_to_visit_count(request_header, response_header)
+    visit_count = /(?<=visit-count=)\d*/.match(request_header)[0].to_i
+    p visit_count
+    visit_count += 1
+    p visit_count
+    insert_to_header(response_header, "Set-Cookie: visit-count=#{visit_count}" )
   end
-
-
-
 
   # header methods
 
@@ -96,6 +102,5 @@ EOF
     index_to_insert = header.index(/Connection: close/)
     revised_header = header.insert(index_to_insert, "#{line_to_insert}")
   end
-
 
 end
