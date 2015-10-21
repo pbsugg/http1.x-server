@@ -15,13 +15,25 @@ server = HTTPServer.new
 loop do
   # get client
   client = connection.accept
-
+  puts "this is the beginning"
 # had to get each line of header, did it with this messy "break" method--has to be a better way!
+# Having problems receiving POST bodies--had to do this for now.
   request_header = ""
   client.each_line do |line|
     request_header << line
-    break if line == "\r\n"
+    p line
+    if request_header.include?("POST")
+      break if line.include?("hidden")
+    else
+      break if line == "\r\n"
+    end
+    # almost seems like there are two response streams
+    # had to use a *separate* break (so *two* breaks) if receiving a POST
+    break if request_header.include?("password=")
   end
+
+  puts "this is the end"
+
 
   # fetch the resource(s) and determine code
   resource = server.normalize_resource(server.get_base_http_resource(request_header))

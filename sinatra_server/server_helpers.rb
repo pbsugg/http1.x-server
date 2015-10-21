@@ -12,7 +12,6 @@ module ServerHelpers
 
   # just the base uri that allows me to find the files
   def get_base_http_resource(request_header)
-    p request_header
     base_http_resource = /\/[^?|\s]*/.match(request_header)[0]
   end
 
@@ -88,9 +87,7 @@ EOF
   # updates the visitor count by one
   def add_to_visit_count(request_header, response_header)
     visit_count = /(?<=visit-count=)\d*/.match(request_header)[0].to_i
-    p visit_count
     visit_count += 1
-    p visit_count
     insert_to_header(response_header, "Set-Cookie: visit-count=#{visit_count}" )
   end
 
@@ -100,7 +97,7 @@ EOF
   def insert_to_header(header, line_to_insert)
     # always inserting immediately before the last line
     index_to_insert = header.index(/Connection: close/)
-    revised_header = header.insert(index_to_insert, "#{line_to_insert}")
+    revised_header = header.insert(index_to_insert, "#{line_to_insert}\n")
   end
 
 end

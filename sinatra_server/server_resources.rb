@@ -37,7 +37,7 @@ class HTTPServer
  #todo: something smells about this method still, it does/knows too much
  # don't like the fact that this is take three arguments either, obv. doing too much
   def aggregate_response_body(request_header, response_body, resource, full_resource)
-    # welcome page
+  # welcome page
     if resource == "/welcome.html" && query_parameters?(full_resource)
       full_name = parse_name_query_parameters(full_resource)
       insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
