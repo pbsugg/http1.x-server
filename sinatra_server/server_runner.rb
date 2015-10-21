@@ -28,7 +28,7 @@ loop do
       break if line == "\r\n"
     end
     # almost seems like there are two response streams
-    # had to use a *separate* break (so *two* breaks) if receiving a POST
+    # had to use a *separate* break (so *two* breaks)
     break if request_header.include?("password=")
   end
 

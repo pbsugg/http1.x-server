@@ -8,6 +8,7 @@ class HTTPServer
 
   @@root_path = File.dirname(__FILE__)
   @@views_path = "#{@@root_path}/views"
+  @@logged_in_users = []
 
   include ServerHelpers
 
@@ -42,11 +43,21 @@ class HTTPServer
       full_name = parse_name_query_parameters(full_resource)
       insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
-  elsif resource == "/visits.html"
+    elsif resource == "/visits.html"
     # this is bad, should be a method I know...
       count = get_visit_count(request_header).to_i
       count +=1
       insert_to_body({response_body: response_body, insert_point: "X", text_to_insert: "#{count}"})
+    elsif resource == "/login.html"  && get_http_verb(request_header) == "POST"
+      p request_header
+      login_info = parse_login_info(request_header)
+      if find_user(login_info)
+        p "user found!"
+        response_body
+      else
+        p "user not found!"
+        response_body
+      end
     else
       response_body
     end

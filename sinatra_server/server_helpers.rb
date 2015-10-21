@@ -1,4 +1,5 @@
 require 'cgi'
+require 'csv'
 
 module ServerHelpers
 
@@ -32,6 +33,30 @@ module ServerHelpers
       "#{full_name["first"].pop} #{full_name["last"].pop}!"
     end
   end
+
+  # login
+
+  def parse_login_info(request_header)
+    username = /(?<=username=)\w*/.match(request_header)[0]
+    password = /(?<=password=)\w*/.match(request_header)[0]
+    {username: username, password: password}
+  end
+
+  # find user from '.csv' db file
+  def find_user(login_info)
+    CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
+      # check for username match
+      potential_username = line[0]
+      p password = line[1]
+      return true if login_info[:username] == potential_username && login_info[:password] == password
+    end
+  end
+
+  # users
+
+  def create_new_user
+  end
+
 
   # Methods to get the resource
 
