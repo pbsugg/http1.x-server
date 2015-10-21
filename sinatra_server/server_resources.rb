@@ -1,5 +1,5 @@
 require 'socket'
-require_relative "server_helpers.rb"
+require_relative "./server_helpers.rb"
 
 
 
@@ -15,13 +15,24 @@ class HTTPServer
 
   # login trackers
 
-  def log_in_user(login_info)
-    user = login_info[:username]
+  # if there's already a user_id in the header, get that
+  # otherwise, assign it here
+    # then pull it down later when you need to insert it in the header)
+  def log_in_user(login_info, request_header)
+    user = [login_info[:username], find_uid(request_header)]
     @current_users << user
   end
 
-  def is_logged_in?(request_header, login_info)
-
+  def is_logged_in?(request_header)
+    p find_uid(request_header)
+    if find_uid(request_header)
+      @current_users.each do |user|
+        # user[1] is the uid in the session store
+        p user[1]
+        return true if user[1] == find_uid(request_header)
+      end
+    end
+    false
   end
 
   #
@@ -67,8 +78,8 @@ class HTTPServer
     elsif resource == "/login.html"  && get_http_verb(request_header) == "POST"
       login_info = parse_login_info(request_header)
       if authenticate_user(login_info)
+        log_in_user(login_info, request_header)
         # p "user found!"
-        log_in_user(login_info)
         # once user logs in...
           # (1) register him/header in my instance variable
           # (2) find/give a cookie
@@ -94,6 +105,7 @@ Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
 Content-Type: text/html
 Content-Length: #{response_body.length}
 Connection: close
+<>
 HEADER
     when 404
       response_header = <<-HEADER
@@ -102,13 +114,13 @@ Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
 Content-Type: text/html
 Content-Length: #{response_body.length}
 Connection: close
+<>
 HEADER
     end
   end
 
 
   def aggregate_response_header(request_header, response_header)
-      p @current_users
       if visit_cookie?(request_header)
         insert_to_header(response_header, add_to_visit_count(request_header))
       else

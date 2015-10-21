@@ -31,7 +31,7 @@ loop do
     # had to use a *separate* break (so *two* breaks)
     break if request_header.include?("password=")
   end
-
+  p request_header
   puts "this is the end"
 
 

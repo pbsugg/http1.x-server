@@ -42,6 +42,8 @@ module ServerHelpers
     {username: username, password: password}
   end
 
+
+
   # find user from '.csv' db file
   def authenticate_user(login_info)
     CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
@@ -53,6 +55,17 @@ module ServerHelpers
     end
   end
   # users
+
+  # for getting a user's uid from database to pass to session
+  # must be a valid user uid
+  def fetch_user_uid(login_info)
+    CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
+      username = line[0]
+      # line[2] is uid
+      return line[2] if login_info[:username] == username
+    end
+    nil
+  end
 
   def create_new_user
   end
@@ -114,7 +127,8 @@ EOF
   end
 
   def find_uid(request_header)
-    uid = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
+    uid = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)
+    uid[0] unless uid == nil
   end
 
   # header methods
@@ -122,7 +136,7 @@ EOF
   # This test is bad at the moment, causing problems with format of header
   def insert_to_header(header, line_to_insert)
     # always inserting immediately before the last line
-    index_to_insert = header.index(/Connection: close/)
+    index_to_insert = header.index(/(<>)/)
     revised_header = header.insert(index_to_insert, "#{line_to_insert}\r\n")
   end
 
