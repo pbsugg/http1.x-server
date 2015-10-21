@@ -1,6 +1,6 @@
 require 'cgi'
 require 'csv'
-
+require_relative 'server_resources.rb'
 module ServerHelpers
 
 
@@ -50,10 +50,6 @@ module ServerHelpers
       return true if login_info[:username] == potential_username && login_info[:password] == potential_password
     end
   end
-
-  def is_logged_in?(username)
-  end
-
   # users
 
   def create_new_user
@@ -83,7 +79,7 @@ module ServerHelpers
   # When you go to /visits, if that person has a cookie that the server recognizes, increment the visit count
 
 
-  # cookie methods
+  # cookie methods--checking the header
 
   def visit_cookie?(request_header)
     request_header.include?("visit-count")
@@ -94,17 +90,6 @@ module ServerHelpers
 Set-Cookie: visit-count=1
 EOF
   end
-
-# cookie procedure
-# when a new visitor comes
-# see if they have your cookie
-# if they DON'T
-  # send them a cookie with a identifying number at 1
-# if they DO...
-    # get the visit count
-    # add 1 to it
-    # put the new count in the body AND header
-
 
   # gets the number of visits in string form
   def get_visit_count(request_header)
