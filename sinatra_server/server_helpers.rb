@@ -43,11 +43,13 @@ module ServerHelpers
   end
 
   # find user from '.csv' db file
-  def find_user(login_info)
+  def authenticate_user(login_info)
     CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
       potential_username = line[0]
       potential_password = line[1]
-      return true if login_info[:username] == potential_username && login_info[:password] == potential_password
+      if login_info[:username] == potential_username
+        return true if login_info[:password] == potential_password
+      end
     end
   end
   # users
@@ -97,10 +99,22 @@ EOF
   end
 
   # updates the visitor count by one
-  def add_to_visit_count(request_header, response_header)
+  def add_to_visit_count(request_header)
     visit_count = /(?<=visit-count=)\d*/.match(request_header)[0].to_i
     visit_count += 1
-    insert_to_header(response_header, "Set-Cookie: visit-count=#{visit_count}" )
+    "Set-Cookie: visit-count=#{visit_count}"
+  end
+
+  #unique user id
+
+  def create_uid_cookie
+    require 'securerandom'
+    user_id = SecureRandom.uuid
+    "Set-Cookie: uid=#{user_id}"
+  end
+
+  def find_uid(request_header)
+    uid = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)[0]
   end
 
   # header methods
@@ -109,7 +123,7 @@ EOF
   def insert_to_header(header, line_to_insert)
     # always inserting immediately before the last line
     index_to_insert = header.index(/Connection: close/)
-    revised_header = header.insert(index_to_insert, "#{line_to_insert}\n")
+    revised_header = header.insert(index_to_insert, "#{line_to_insert}\r\n")
   end
 
 end

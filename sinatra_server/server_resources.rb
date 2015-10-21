@@ -17,13 +17,12 @@ class HTTPServer
 
   def log_in_user(login_info)
     user = login_info[:username]
-    @current_user = user
+    @current_users << user
   end
 
-  # def is_logged_in?(login_info)
-  #   user = login_info[:username]
-  #   return true if @@logged_in_users.include?(user)
-  # end
+  def is_logged_in?(request_header, login_info)
+
+  end
 
   #
 
@@ -60,17 +59,16 @@ class HTTPServer
       full_name = parse_name_query_parameters(full_resource)
       insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
-  elsif resource == "/visits.html" && logged_on == true
+  elsif resource == "/visits.html"
     # this is bad, should be a method I know...
       count = get_visit_count(request_header).to_i
       count +=1
       insert_to_body({response_body: response_body, insert_point: "X", text_to_insert: "#{count}"})
     elsif resource == "/login.html"  && get_http_verb(request_header) == "POST"
       login_info = parse_login_info(request_header)
-      if find_user(login_info)
+      if authenticate_user(login_info)
         # p "user found!"
         log_in_user(login_info)
-        @logged_on = true
         # once user logs in...
           # (1) register him/header in my instance variable
           # (2) find/give a cookie
@@ -110,14 +108,13 @@ HEADER
 
 
   def aggregate_response_header(request_header, response_header)
-    if @logged_on == true
+      p @current_users
       if visit_cookie?(request_header)
-        return add_to_visit_count(request_header, response_header)
+        insert_to_header(response_header, add_to_visit_count(request_header))
       else
-        return insert_to_header(response_header, create_visit_cookie)
+        insert_to_header(response_header, create_uid_cookie)
+        insert_to_header(response_header, create_visit_cookie)
       end
-    end
-    response_header
   end
 
   def form_entire_response(response_header, response_body)
