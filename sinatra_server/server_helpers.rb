@@ -45,11 +45,13 @@ module ServerHelpers
   # find user from '.csv' db file
   def find_user(login_info)
     CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
-      # check for username match
       potential_username = line[0]
-      p password = line[1]
-      return true if login_info[:username] == potential_username && login_info[:password] == password
+      potential_password = line[1]
+      return true if login_info[:username] == potential_username && login_info[:password] == potential_password
     end
+  end
+
+  def is_logged_in?(username)
   end
 
   # users

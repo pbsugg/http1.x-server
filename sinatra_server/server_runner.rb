@@ -46,7 +46,7 @@ loop do
   finalized_response_body = server.aggregate_response_body(request_header, response_body, resource, full_resource)
 
   # build header
-  response_header = server.build_response_header(response_code, response_body)
+  response_header = server.build_response_header(response_code, finalized_response_body)
   finalized_response_header = server.aggregate_response_header(request_header, response_header)
 
   # send it to the client
