@@ -6,20 +6,20 @@ require_relative "./server_helpers.rb"
 
 class HTTPServer
 
+  include ServerHelpers
+
   @@root_path = File.dirname(__FILE__)
   @@views_path = "#{@@root_path}/views"
 
   def initialize
     @current_users = []
+    @unlogged_info = []
   end
 
-  # login trackers
+  # login tracker methods
 
-  # if there's already a user_id in the header, get that
-  # otherwise, assign it here
-    # then pull it down later when you need to insert it in the header)
-  def log_in_user(login_info, request_header)
-    user = [login_info[:username], find_uid(request_header)]
+  def log_in_user(login_info, uid)
+    user = [login_info[:username], uid]
     @current_users << user
   end
 
@@ -35,9 +35,18 @@ class HTTPServer
     false
   end
 
-  #
+  def register_unlogged_info
+    @unlogged_info << @current_users[-1]
+  end
 
-  include ServerHelpers
+  # TD: for inserting an existing uid from session to header
+  def insert_unlogged_uid
+    "Set-Cookie: uid=#{@unlogged_info[0][1]}"
+  end
+
+  def delete_unlogged_info
+    @unlogged_info = []
+  end
 
 # Response pre-processing
 
@@ -78,7 +87,8 @@ class HTTPServer
     elsif resource == "/login.html"  && get_http_verb(request_header) == "POST"
       login_info = parse_login_info(request_header)
       if authenticate_user(login_info)
-        log_in_user(login_info, request_header)
+        p @current_users
+        register_unlogged_info
         # p "user found!"
         # once user logs in...
           # (1) register him/header in my instance variable
@@ -119,13 +129,16 @@ HEADER
     end
   end
 
+# are there any users?
 
+# this method has become a mess, needs more
   def aggregate_response_header(request_header, response_header)
-      if visit_cookie?(request_header)
-        insert_to_header(response_header, add_to_visit_count(request_header))
-      else
-        insert_to_header(response_header, create_uid_cookie)
+      if @unlogged_info.any?
+        insert_to_header(response_header, insert_unlogged_uid)
+      elsif no_visit_cookie?(request_header)
         insert_to_header(response_header, create_visit_cookie)
+      else
+        insert_to_header(response_header, add_to_visit_count(request_header))
       end
   end
 

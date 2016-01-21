@@ -50,7 +50,10 @@ module ServerHelpers
       potential_username = line[0]
       potential_password = line[1]
       if login_info[:username] == potential_username
-        return true if login_info[:password] == potential_password
+        if login_info[:password] == potential_password
+          log_in_user(login_info, line[2])
+          return true
+        end
       end
     end
   end
@@ -96,8 +99,8 @@ module ServerHelpers
 
   # cookie methods--checking the header
 
-  def visit_cookie?(request_header)
-    request_header.include?("visit-count")
+  def no_visit_cookie?(request_header)
+    true unless request_header.include?("visit-count")
   end
 
   def create_visit_cookie
@@ -123,10 +126,10 @@ EOF
   def create_uid_cookie
     require 'securerandom'
     user_id = SecureRandom.uuid
-    "Set-Cookie: uid=#{user_id}"
   end
 
-  def find_uid(request_header)
+
+  def get_header_uid(request_header)
     uid = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.match(request_header)
     uid[0] unless uid == nil
   end

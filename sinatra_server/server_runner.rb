@@ -13,6 +13,7 @@ server = HTTPServer.new
 
 # full request and response cycle
 loop do
+  server.delete_unlogged_info
   # get client
   client = connection.accept
   puts "this is the beginning"
