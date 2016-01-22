@@ -32,10 +32,8 @@ loop do
     # had to use a *separate* break (so *two* breaks)
     break if request_header.include?("password=")
   end
-  p request_header
-  puts "this is the end"
 
-
+  p verb = server.get_http_verb(request_header)
   # fetch the resource(s) and determine code
   resource = server.normalize_resource(server.get_base_http_resource(request_header))
   response_code = server.determine_response_code(resource)

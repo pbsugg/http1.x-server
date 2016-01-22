@@ -79,7 +79,7 @@ class HTTPServer
       full_name = parse_name_query_parameters(full_resource)
       insert_to_body({response_body: response_body, insert_point: "World", text_to_insert: full_name})
     # visits page
-  elsif resource == "/visits.html"
+    elsif resource == "/visits.html"
     # this is bad, should be a method I know...
       count = get_visit_count(request_header).to_i
       count +=1
@@ -98,6 +98,8 @@ class HTTPServer
         p "user not found!"
         # response_body = build_response_body(404, "/404.html")
       end
+    elsif resource == "/registration.html"  && get_http_verb(request_header) == "POST"
+
     else
       response_body
     end
@@ -131,7 +133,7 @@ HEADER
 
 # are there any users?
 
-# this method has become a mess, needs more
+# this method has become a mess, needs more work
   def aggregate_response_header(request_header, response_header)
       if @unlogged_info.any?
         insert_to_header(response_header, insert_unlogged_uid)
