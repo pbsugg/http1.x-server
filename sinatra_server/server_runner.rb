@@ -21,20 +21,31 @@ loop do
 # Having problems receiving POST bodies--had to do this for now.
   request_header = ""
   client.each_line do |line|
+
     request_header << line
     p line
-    if request_header.include?("POST")
-      break if line.include?("password")
-      break if line.include?("password")
 
-    else
+    if request_header.include?("GET")
       break if line == "\r\n"
     end
-    # almost seems like there are two response streams
-    # had to use a *separate* break (so *two* breaks)
-    # break if request_header.include?("password=")
 
-  end
+    if line == "\r\n" && request_header.include?("POST")
+        request_header << client.read(47)
+        p request_header
+        break
+    end
+    
+end
+
+
+  #   client = connection.accept
+  #   client.each_line do |line|
+  #     "receiving POST body"
+  #
+  #     p line
+  #   end
+  # end
+
 
   p "Server receipt of request closed"
   puts "\n"
