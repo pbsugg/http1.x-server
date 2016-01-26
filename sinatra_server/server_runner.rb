@@ -25,33 +25,26 @@ loop do
     request_header << line
     p line
 
-    if request_header.include?("GET")
-      break if line == "\r\n"
-    end
+    # conditions for closing request header if a GET
+    break if line == "\r\n" && request_header.include?("GET")
 
+    # conditions for closing request if it's a POST--had to do because
+    # server was hanging up before the POST body unless I did it this way
     if line == "\r\n" && request_header.include?("POST")
-        request_header << client.read(47)
-        p request_header
-        break
+      # content_length is matchdata object
+       content_length = /(?<=Content-Length: )\d*/.match(request_header)
+       request_header << client.read(content_length[0].to_i)
+       p request_header
+       break
     end
-    
+
 end
-
-
-  #   client = connection.accept
-  #   client.each_line do |line|
-  #     "receiving POST body"
-  #
-  #     p line
-  #   end
-  # end
-
 
   p "Server receipt of request closed"
   puts "\n"
   p ">>>>>>>>>"
   p "Here is your http verb: #{server.get_http_verb(request_header)}"
-  p "Here is your resource: #{server.get_full_http_resource(request_header)}"
+  p "Here is your http resource: #{server.get_full_http_resource(request_header)}"
   p ">>>>>>>>>"
   puts "\n"
 
