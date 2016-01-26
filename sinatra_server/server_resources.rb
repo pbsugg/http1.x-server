@@ -19,7 +19,7 @@ class HTTPServer
   # login tracker methods
 
   def log_in_user(login_info, uid)
-    user = [login_info[:username], uid]
+    p user = [login_info[:username], uid]
     @current_users << user
   end
 
@@ -72,7 +72,7 @@ class HTTPServer
 
 
  #todo: something smells about this method still, it does/knows too much
- # don't like the fact that this is take three arguments either, obv. doing too much
+ # don't like the fact that this is take four arguments either, obv. doing too much
   def aggregate_response_body(request_header, response_body, resource, full_resource)
   # welcome page
     if resource == "/welcome.html" && query_parameters?(full_resource)
@@ -85,10 +85,13 @@ class HTTPServer
       count +=1
       insert_to_body({response_body: response_body, insert_point: "X", text_to_insert: "#{count}"})
     elsif resource == "/login.html"  && get_http_verb(request_header) == "POST"
+      p "here in controller!"
       login_info = parse_login_info(request_header)
+      p login_info
       if authenticate_user(login_info)
-        p @current_users
+
         register_unlogged_info
+
         # p "user found!"
         # once user logs in...
           # (1) register him/header in my instance variable
@@ -99,6 +102,9 @@ class HTTPServer
         # response_body = build_response_body(404, "/404.html")
       end
     elsif resource == "/registration.html"  && get_http_verb(request_header) == "POST"
+      login_info = parse_login_info(request_header)
+      p login_info
+      # p @current_users
       response_body = build_response_body(200, "/profile.html")
     else
       response_body
@@ -136,6 +142,8 @@ HEADER
 # this method has become a mess, needs more work
   def aggregate_response_header(request_header, response_header)
       if @unlogged_info.any?
+        p "here at unlogged info: #{@unlogged_info}"
+        p insert_unlogged_uid
         insert_to_header(response_header, insert_unlogged_uid)
       elsif no_visit_cookie?(request_header)
         insert_to_header(response_header, create_visit_cookie)

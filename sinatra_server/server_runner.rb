@@ -50,6 +50,8 @@ end
 
   puts "now to process the request!"
 
+  # Response cycle below
+
   # fetch the resource(s) and determine code
   resource = server.normalize_resource(server.get_base_http_resource(request_header))
   response_code = server.determine_response_code(resource)

@@ -38,7 +38,7 @@ module ServerHelpers
 
   def parse_login_info(request_header)
     username = /(?<=username=)\w*/.match(request_header)[0]
-    password = /(?<=password=)\w*/.match(request_header)[1]
+    password = /(?<=password=)\w*/.match(request_header)[0]
     {username: username, password: password}
   end
 
@@ -47,10 +47,11 @@ module ServerHelpers
   # find user from '.csv' db file
   def authenticate_user(login_info)
     CSV.foreach("#{Dir.pwd}/db/users.csv") do |line|
-      potential_username = line[0]
-      potential_password = line[1]
-      if login_info[:username] == potential_username
-        if login_info[:password] == potential_password
+      p line
+      db_username = line[0]
+      db_password = line[1]
+      if login_info[:username] == db_username
+        if login_info[:password] == db_password
           log_in_user(login_info, line[2])
           return true
         end
