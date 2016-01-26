@@ -38,7 +38,7 @@ module ServerHelpers
 
   def parse_login_info(request_header)
     username = /(?<=username=)\w*/.match(request_header)[0]
-    password = /(?<=password=)\w*/.match(request_header)[0]
+    password = /(?<=password=)\w*/.match(request_header)[1]
     {username: username, password: password}
   end
 

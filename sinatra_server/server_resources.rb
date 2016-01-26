@@ -99,7 +99,7 @@ class HTTPServer
         # response_body = build_response_body(404, "/404.html")
       end
     elsif resource == "/registration.html"  && get_http_verb(request_header) == "POST"
-
+      response_body = build_response_body(200, "/profile.html")      
     else
       response_body
     end

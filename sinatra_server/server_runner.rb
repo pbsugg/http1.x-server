@@ -13,10 +13,10 @@ server = HTTPServer.new
 
 # full request and response cycle
 loop do
+  p "Start of response cycle: Server waiting for a request"
   server.delete_unlogged_info
   # get client
   client = connection.accept
-  puts "this is the beginning"
 # had to get each line of header, did it with this messy "break" method--has to be a better way!
 # Having problems receiving POST bodies--had to do this for now.
   request_header = ""
@@ -24,16 +24,28 @@ loop do
     request_header << line
     p line
     if request_header.include?("POST")
-      break if line.include?("hidden")
+      break if line.include?("password")
+      break if line.include?("password")
+
     else
       break if line == "\r\n"
     end
     # almost seems like there are two response streams
     # had to use a *separate* break (so *two* breaks)
-    break if request_header.include?("password=")
+    # break if request_header.include?("password=")
+
   end
 
-  p verb = server.get_http_verb(request_header)
+  p "Server receipt of request closed"
+  puts "\n"
+  p ">>>>>>>>>"
+  p "Here is your http verb: #{server.get_http_verb(request_header)}"
+  p "Here is your resource: #{server.get_full_http_resource(request_header)}"
+  p ">>>>>>>>>"
+  puts "\n"
+
+  puts "now to process the request!"
+
   # fetch the resource(s) and determine code
   resource = server.normalize_resource(server.get_base_http_resource(request_header))
   response_code = server.determine_response_code(resource)
@@ -51,4 +63,5 @@ loop do
   # send it to the client
   client.puts(server.form_entire_response(finalized_response_header, finalized_response_body))
   client.close
+
 end
