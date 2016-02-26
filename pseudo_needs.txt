@@ -1,0 +1,30 @@
+1) Can I easily add new resources?
+
+  some kind of container to hold all my different resources
+  create one, add it to the pot
+  input: resource name
+  output: filename added to the container of existing resources
+
+
+2) Can I easily add new responses?
+
+  input: file name of page with html?
+  output: html file inserted as response body?
+
+3) Can I easily add new response headers?
+
+  method to take all the relevant generic details (content-type, etc.)
+  should measure the content length, insert that at relevant point
+
+  input: response body
+  output: response body with header appended
+
+4) Can I easily parse new request headers?
+
+  method
+  input: request line from curl request
+  output: resource name from request
+
+"As you refactor, favor methods that accept the data they need as arguments and return their work as a result. These are easy to test, since you can pass something in and assert that the result is what you expect. Methods that read and write data from instance variables are more difficult to setup."
+
+5) Need to do the actual "client loop" of accepting a client connection.

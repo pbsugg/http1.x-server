@@ -1,0 +1,14 @@
+#pseudocode for what i will need to accomplish with login procedures==end of release
+
+Create login resources:
+1) login (with post form, etc.)
+2) registration
+
+-Figure out where I am going to *store* all of this login info
+  - parsing the login query
+-Come up with a method for processing GET vs. POST
+
+-Hook up the login functionality to the "visit" functionality, so that I'm tracking logged-in visits only
+  --i.e., they have to be logged in to track visits
+  (might not be that hard to do messily, just add "if" conditional to visits)
+--show user info on the profile page based on login   
